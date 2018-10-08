@@ -1,6 +1,9 @@
 import sun.security.provider.Sun
+import java.io.BufferedReader
+import java.io.StringReader
 import java.lang.Exception
 import java.lang.IllegalArgumentException
+import java.lang.NumberFormatException
 import java.util.*
 
 interface Expr
@@ -59,7 +62,7 @@ fun fizzBuzz(i: Int) = when {
 }
 
 fun itMap() {
-    val binaryReps = TreeMap<Char,String>()
+    val binaryReps = TreeMap<Char, String>()
     for (c in 'A'..'F') {
         val binary = Integer.toBinaryString(c.toInt())
         binaryReps[c] = binary
@@ -71,24 +74,75 @@ fun itMap() {
 }
 
 fun itList() {
-    val list = arrayListOf("10","11","1001")
+    val list = arrayListOf("10", "11", "1001")
     for ((index, element) in list.withIndex()) {
         println("$index: $element")
     }
 }
 
-fun isLetter(c:Char) = c in 'a'..'z' || c in 'A'..'Z'
+fun isLetter(c: Char) = c in 'a'..'z' || c in 'A'..'Z'
 
-fun isNotDigit(c:Char) = c !in '0'..'9'
+fun isNotDigit(c: Char) = c !in '0'..'9'
 
 fun recognize(c: Char) = when (c) {
     in '0'..'9' -> "It's a digit!"
-    in 'a'..'z',in 'A'..'Z' -> "It's a letter!"
+    in 'a'..'z', in 'A'..'Z' -> "It's a letter!"
     else -> "I don't know..."
 }
 
+fun throwException(number: Int) :Int{
+//    return if (number in 0..100)
+    val percentage = if (number in 0..100)
+        number
+    else
+        throw IllegalArgumentException(
+                "A percentage value must between 0 and 100: $number"
+        )
+    return percentage
+}
+
+fun readNumber(reader: BufferedReader): Int? {
+    try {
+        val line = reader.readLine()
+        return Integer.parseInt(line)
+    }
+    catch (e: NumberFormatException) {
+        return null
+    }
+    finally {
+        reader.close()
+    }
+}
+
+fun readNumber1(reader:BufferedReader){
+    val number = try {
+        Integer.parseInt(reader.readLine())
+    } catch (e: NumberFormatException) {
+        return
+    }finally {
+        reader.close()
+    }
+    println(number)
+}
+
+fun readNumber2(reader: BufferedReader) {
+    val number = try {
+        Integer.parseInt(reader.readLine())
+    } catch (e: NumberFormatException) {
+        null
+    }
+    println(number)
+}
+
 fun main(args: Array<String>) {
-    p(recognize('8'))
+    readNumber2(BufferedReader(StringReader("not a number")))
+//    readNumber1(BufferedReader(StringReader("12")))
+//    p(readNumber(BufferedReader(StringReader("50"))))
+//    p(readNumber(BufferedReader(StringReader("not a number"))))
+//    println("Kotlin" in setOf("Java", "Scala"))
+//    println("Kotlin" in "Java" .. "Scala")
+//    p(throwException(101))
+//    p(recognize('8'))
 //    p(isLetter('s'))
 //    p(isNotDigit('5'))
 //    itList()

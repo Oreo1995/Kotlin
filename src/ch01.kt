@@ -1,7 +1,7 @@
 import java.lang.IllegalArgumentException
 import Color.*
 
-fun p(T:Any){
+fun p(T:Any?){
     println(T)
 }
 
@@ -216,6 +216,7 @@ fun main(args: Array<String>) {
 //    add(3, 5)
 //    print(sum(10, 5))
 //    o2o()
+
 //    print(vars(1,2,3,4,5))
 
 //    val sumLambda:(Int,Int) -> Int = {x,y -> x+y}
