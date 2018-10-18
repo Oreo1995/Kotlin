@@ -27,12 +27,12 @@ fun <T> joinToString(
         separator: String,
         prefix: String,
         postfix: String
-    ): String {
+): String {
 
     val result = StringBuilder(prefix)
 
     for ((index, element) in collection.withIndex()) {
-        if(index > 0)
+        if (index > 0)
             result.append(separator)
         result.append(element)
     }
@@ -51,7 +51,7 @@ fun <T> joinToString1(
     val result = StringBuilder(prefix)
 
     for ((index, element) in collection.withIndex()) {
-        if(index > 0)
+        if (index > 0)
             result.append(separator)
         result.append(element)
     }
@@ -60,11 +60,79 @@ fun <T> joinToString1(
     return result.toString()
 }
 
+//public static final String UNIX_LINE_SEPARATOR = "\n"
+//const val UNIX_LINE_SEPARATOR = "\n"
+
+fun String.lastChar(): Char = this[this.length - 1]
+fun String.lastChar1(): Char = this.get(this.length - 1)
+fun String.lastChar2(): Char = get(length - 1)
+
+fun <T> Collection<T>.joinToString2(
+        separator: String = ",",
+        prefix: String = "",
+        postfix: String = ""
+): String {
+    val result = StringBuilder(prefix)
+    for ((index, element) in this.withIndex()) {
+        if (index > 0) result.append(separator)
+        result.append(element)
+    }
+    result.append(postfix)
+    return result.toString()
+}
+
+fun Collection<String>.join(
+        separator: String = ",",
+        prefix: String = "",
+        postfix: String = ""
+) = joinToString2(separator, prefix, postfix)
+
+open class View {
+    open fun click() = println("View clicked")
+}
+
+class Button : View() {
+    override fun click() = println("Button clicked")
+}
+
+fun View.showOff() = println("I'm a view!")
+fun Button.showOff() = println("I'm a button!")     //can not override the extension function
+
+val String.lastCharElement: Char
+    get() = get(length - 1)     //getter
+
+var StringBuilder.lastChar: Char
+    get() = get(length - 1)     //getter
+    set(value: Char) {          //setter
+        this.setCharAt(length - 1, value)
+    }
 
 fun main(args: Array<String>) {
-    val list = listOf(1,2,3)
-    p(joinToString1(list,","))
-    p(joinToString1(list,prefix = "*",postfix = "&"))
+    val strings:List<String> = listOf("first","second","fourteenth")
+    p(strings.last())
+
+    val numbers:Collection<Int> = listOf(1,14,2)
+    p(numbers.max())
+
+//    val sb = StringBuilder("Kotlin?")
+//    sb.lastChar = '!'
+//    p(sb)
+
+//    p("Kot".lastCharElement)
+
+//    val view:View = Button()
+//    view.showOff()      //I'm a view!
+
+//    val view:View = Button()
+//    view.click()
+
+//    p(listOf("one", "two", "three").join(" "))
+//    p("Kotlin".lastChar())
+
+//    val list = listOf(1, 2, 3)
+//    p(list.joinToString2(separator = ";",prefix = "(",postfix = ")"))
+//    p(joinToString1(list, ","))
+//    p(joinToString1(list, prefix = "*", postfix = "&"))
 
 //    p(joinToString(list,/*seprator*/";",/*prefix*/"(",")"))
 //    p(joinToString(list,separator = ",",prefix = "(",postfix = ")"))
