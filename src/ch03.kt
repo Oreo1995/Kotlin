@@ -1,3 +1,4 @@
+import java.lang.IllegalArgumentException
 import java.lang.StringBuilder
 import javax.swing.plaf.basic.BasicPopupMenuSeparatorUI
 
@@ -87,16 +88,16 @@ fun Collection<String>.join(
         postfix: String = ""
 ) = joinToString2(separator, prefix, postfix)
 
-open class View {
+        open class View {
     open fun click() = println("View clicked")
 }
 
-class Button : View() {
+class Button1 : View() {
     override fun click() = println("Button clicked")
 }
 
 fun View.showOff() = println("I'm a view!")
-fun Button.showOff() = println("I'm a button!")     //can not override the extension function
+fun Button1.showOff() = println("I'm a button!")     //can not override the extension function
 
 val String.lastCharElement: Char
     get() = get(length - 1)     //getter
@@ -107,12 +108,55 @@ var StringBuilder.lastChar: Char
         this.setCharAt(length - 1, value)
     }
 
-fun main(args: Array<String>) {
-    val strings:List<String> = listOf("first","second","fourteenth")
+fun compare() {
+    val strings: List<String> = listOf("first", "second", "fourteenth")
     p(strings.last())
 
-    val numbers:Collection<Int> = listOf(1,14,2)
+    val numbers: Collection<Int> = listOf(1, 14, 2)
     p(numbers.max())
+}
+
+//infix fun Any.to(other:Any) = Pair(this,other)
+
+class User(val id: Int, val name: String, val address: String)
+
+//局部函数
+fun saveUser(user: User) {
+    fun validate(value: String, fieldName: String) {
+        if (value.isEmpty()) {
+            throw IllegalArgumentException(
+                    "Can't save user ${user.id}: " +
+                            "empty $fieldName"
+            )
+        }
+    }
+
+    validate(user.name, "Name")
+    validate(user.address, "Address")
+}
+
+//扩展函数+内部函数验证
+fun User.validateBeforeSave() {
+    fun validate(value: String, fieldName: String) {
+        if (value.isEmpty()) {
+            throw IllegalArgumentException(
+                    "Can's save user $id: empty $fieldName"
+            )
+        }
+    }
+    validate(name, "Name")
+    validate(address, "Address")
+}
+
+fun saveUser2(user: User) {
+    user.validateBeforeSave()
+}
+
+fun main(args: Array<String>) {
+//    saveUser2(User(3,"",""))
+//    saveUser(User(2, "3", ""))
+
+//    val (number,name) = 1 to "one"
 
 //    val sb = StringBuilder("Kotlin?")
 //    sb.lastChar = '!'
