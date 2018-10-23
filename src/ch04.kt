@@ -1,3 +1,4 @@
+import java.io.File
 import javax.naming.Context
 import javax.swing.text.AttributeSet
 
@@ -128,9 +129,9 @@ class SubscribingUser(val email: String) : User3 {
         get() = email.substringBefore("@")
 }
 
-//class FaceBookUser(val accountId: Int):User3{
-//    override val nickname = getFacebookName(accountId)
-//}
+class FaceBookUser(val accountId: Int) : User3 {
+    override val nickname = getFaceBookName(accountId)
+}
 
 class User4(val name: String) {
     var address: String = "unspecified"
@@ -180,8 +181,8 @@ class DelegatingCollection2<T>(
 ) : Collection<T> by innerList
 
 class CountingSet<T>(
-        val innerSet:MutableCollection<T> = HashSet<T>()
-):MutableCollection<T> by innerSet{
+        val innerSet: MutableCollection<T> = HashSet<T>()
+) : MutableCollection<T> by innerSet {
     var objectAdded = 0
 
     override fun add(element: T): Boolean {
@@ -195,10 +196,132 @@ class CountingSet<T>(
     }
 }
 
+class Person1(val name: String, val sex: Int)
+
+object Payroll {
+    val allEmployees = arrayListOf<Person1>()
+
+    fun calculateSalary() {
+        for (Person in allEmployees) {
+
+        }
+    }
+}
+
+object CaseInsensitiveFileComparator : Comparator<File> {
+    override fun compare(file1: File, file2: File): Int {
+        return file1.path.compareTo(file2.path, ignoreCase = true)
+    }
+}
+
+data class Person2(val name: String) {
+    object NameComparator : Comparator<Person2> {
+        override fun compare(p1: Person2, p2: Person2): Int =
+                p1.name.compareTo(p2.name)
+
+    }
+}
+
+class User5 {
+    val nickname: String
+
+    constructor(email: String) {
+        nickname = email.substringBefore("@")
+    }
+
+    constructor(facebookAccountId: Int) {
+        nickname = "0"
+        getFaceBookName(facebookAccountId)
+    }
+}
+
+fun getFaceBookName(facebookAccountId: Int) = "${facebookAccountId + 1}"
+
+class User6 private constructor(val name: String) {
+    companion object {
+        fun newSubscribingUser(email: String) =
+                User6(email.substringBefore("@"))
+
+        fun newFaceBookUser(accountId: Int) =
+                User6(getFaceBookName(accountId))
+
+    }
+}
+
+class A {
+    companion object {
+        fun bar() {
+            p("Companion object called")
+        }
+    }
+}
+
+class Person3(val name: String) {
+    companion object Loader {
+        fun fromJson(jsonText: String): Person2 = Person2(jsonText.substring(2))
+    }
+}
+
+interface JsonFactory<T> {
+    fun fromJson(jsonText: String): T
+}
+
+class Person4(val name: String) {
+    companion object : JsonFactory<Person4> {
+        override fun fromJson(jsonText: String): Person4 {
+            return Person4(jsonText)
+        }
+    }
+}
+
+//fun loadFromJson<T>(factory: JsonFactory<T>): T {
+//
+//}
+
+//business logic module
+class Person5(val firstName: String, val lastName: String) {
+    companion object {
+
+    }
+}
+
+//client/server communication module
+fun Person5.Companion.fromJson(json: String): Person5 = Person5(json, json.substring(1, 3))
+
 fun main(args: Array<String>) {
-    val cset = CountingSet<Int>()
-    cset.addAll(listOf(1,2,3,4,5))
-    println("${cset.objectAdded} objects were added, ${cset.size} remain")
+
+
+//    val p = Person5.Companion.fromJson("12357")
+//    p(p.firstName)
+//    p(p.lastName)
+
+//    loadFromJson(Person4)
+//    p(Person3.fromJson("kangkang").name)
+//    p(Person3.Loader.fromJson("WangSF").name)
+
+//    A.bar()
+
+//    val subscribingUser = User6.newSubscribingUser("bob@gmail.com")
+//    val faceBookUser = User6.newFaceBookUser(10010)
+//    p(subscribingUser.name)
+//    p(faceBookUser.name)
+
+//    val person1 = User5("Alice")
+//    val person2 = User5(10010)
+
+//    val persons = listOf<Person2>(Person2("Bob"),Person2("Alice"))
+//    p(persons.sortedWith(Person2.NameComparator))
+
+//    val files = listOf<File>(File("/Z"), File("/a"))
+//    p(files.sortedWith(CaseInsensitiveFileComparator))
+//    p(CaseInsensitiveFileComparator.compare(File("/User"), File("/user")))
+
+//    Payroll.allEmployees.add(Person1("ly",1))
+//    Payroll.calculateSalary()
+
+//    val cset = CountingSet<Int>()
+//    cset.addAll(listOf(1,2,3,4,5))
+//    println("${cset.objectAdded} objects were added, ${cset.size} remain")
 
 //    val client1 = Client("Alice", 342562)
 //    val client2 = Client("Alice", 342562)
