@@ -1,3 +1,5 @@
+import java.io.File
+import java.lang.StringBuilder
 import kotlin.math.max
 
 data class Person6(val name: String, val age: Int)
@@ -74,11 +76,89 @@ fun sendEmail(person: Person6, message: String) = println("${person.name}, $mess
 
 class Book(val title: String, val authors: List<String>)
 
+fun File.isInsideHiddenDirectory() =
+        generateSequence(this) { it.parentFile }.any { it.isHidden }
+
+fun createAllDoneRunnable(): Runnable {
+    return Runnable { p("All Done!") }
+}
+
+fun alphabet(): String {
+    val result = StringBuilder()
+    for (letter in 'A'..'Z') {
+        result.append(letter)
+    }
+    result.append("\nNow I know the alphabet!")
+    return result.toString()
+}
+
+fun alphabet1(): String {
+    val result = StringBuilder()
+
+    //in these codes,this can not be write
+    return with(result) {
+        for (letter in 'A'..'Z') {
+            this.append(letter)
+        }
+        append("\nNow I know the alphabet!1")
+        this.toString()
+    }
+}
+
+fun alphabet2() = with(StringBuilder()) {
+    for (letter in 'A'..'Z') {
+        append(letter)
+    }
+    append("\nNow I know the alphabet2!")
+    toString()
+}
+
+fun alphabet3() = StringBuilder().apply {
+    for (letter in 'A'..'Z') {
+        append(letter)
+    }
+    append("\nNow I know the alphabet!3")
+}.toString()
+
+
+//this function can create a StringBuilder and invoke its toString
+fun alphabet4() = buildString {
+    for (letter in 'A'..'Z') {
+        append(letter)
+    }
+    append("\nNow I know the alphabet!4")
+}
+
 fun main(args: Array<String>) {
-    val books = listOf(Book("Thursday Next", listOf("Jasper Fforde")),
-            Book("Mort", listOf("Terry Pratchett")),
-            Book("Good Omens", listOf("Terry Pratchett", "Neil Gaiman")))
-    p(books.flatMap { it.authors }.toSet())
+//    createAllDoneRunnable().run()
+//    p(alphabet())
+    p(alphabet1())
+    p(alphabet2())
+    p(alphabet3())
+    p(alphabet4())
+//    val file = File("/H:test/.HiddenDir/a.txt")
+//    p(file.isInsideHiddenDirectory())
+
+//    val people = listOf(Person6("Alice", 29), Person6("Bob", 31),
+//            Person6("Charles", 31), Person6("Dan", 21))
+//    p(people.asSequence().map(Person6::name).filter { it.length < 4 }.toList())
+//    p(people.asSequence().filter { it.name.length < 4 }.map(Person6::name).toList())   //first to use filter to change less
+//
+//    val naturalNumbers = generateSequence(0) { it + 1 }
+//    val numbersTo100 = naturalNumbers.takeWhile { it <= 100 }
+//    p(numbersTo100.sum())
+
+//    listOf(1, 2, 3, 4).asSequence()
+//            .map { print("map($it) ");it * it }
+//            .filter { p("filter($it) ");it % 2 == 0 }
+//            .toList()       //if toList not exist,console will print nothing,because the Sequence cause map and filter lazy
+//
+//    p(listOf(1, 2, 3, 4).asSequence().map { it * it }.find { it > 3 })
+
+//    val books = listOf(Book("Thursday Next", listOf("Jasper Fforde")),
+//            Book("Mort", listOf("Terry Pratchett")),
+//            Book("Good Omens", listOf("Terry Pratchett", "Neil Gaiman")))
+//    p(books.flatMap { it.authors }.toSet())
 
 //    val strings = listOf("abc","def")
 //    p(strings.flatMap { it.toList() })
@@ -92,6 +172,14 @@ fun main(args: Array<String>) {
 //    p(list.groupBy(String::first))      //{a=[a,ab],b=[b]
 //
 //    val people = listOf(Person6("Alice", 29), Person6("Bob", 31))
+//
+//    p(people.map(Person6::name).filter { it.startsWith("A") })
+//    p(people.asSequence()                   //Serial lazy
+//            .map(Person6::name)
+//            .filter { it.startsWith("A") }
+//            .toList())
+
+
 //    p(people.groupBy { it.age })        //return a map, key to value
 //    p(people.filter { it.age > 30 })
 //    p(people.map { it.name })
