@@ -125,10 +125,10 @@ fun decimalDigitValue(c: Char): Int {
     return c.toInt() - '0'.toInt()
 }
 
-class Person(val name: String, var isMarried: Boolean)
+class Person0(val name: String, var isMarried: Boolean)
 
 fun testPerson() {
-    val person = Person("Bob", false)
+    val person = Person0("Bob", false)
     println(person.name)
     println(person.isMarried)
 }
