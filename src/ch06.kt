@@ -54,12 +54,92 @@ class Person7(val firstName: String, val lastName: String) {
             firstName.hashCode() * 37 + lastName.hashCode() * 37
 }
 
-fun main(args: Array<String>) {
-    val p1 = Person7("Dmitry", "Jemerov")
-    val p2 = Person7("Dmitry", "Jemerov")
+fun ignoreNulls(s: String?) {
+    val sNotNull: String = s!!
+    p(sNotNull.length)
+}
 
-    p(p1 == p2)
-    p(p1.equals(42))
+fun sendEmailTo(email: String) {
+    p("Sending email to $email")
+}
+
+fun getTheBestPersonInTheWorld(): Person7? = null
+
+class MyService {
+    fun performAction(): String = "foo"
+}
+
+//class MyTest {
+//    private var myService: MyService? = null
+//
+//    @Before
+//    fun setUp() {
+//        myService = MyService()
+//    }
+//
+//    @Test fun testsAction() {
+//        Assert.assertEquals("foo",
+//                myService!!.performAction())
+//    }
+//}
+
+//class MyTest1 {
+//    private lateinit var myService: MyService
+//
+//    @Before
+//    fun setUp() {
+//        myService = MyService()
+//    }
+//
+//    @Test fun testsAction() {
+//        Assert.assertEquals("foo",
+//                myService.performAction())
+//    }
+//}
+
+fun <T> printHashCode(t: T) {
+    p(t?.hashCode())
+}
+
+fun <T : Any> printHashCode1(t: T) {
+    p(t.hashCode())
+}
+
+fun verifyUserInput(input: String?) {
+    if (input.isNullOrBlank()) {
+        p("Please fill in the required fields")
+    }else
+        p(input?.length)
+}
+
+fun main(args: Array<String>) {
+    printHashCode("WANG")
+    printHashCode1(5)
+
+//    verifyUserInput(" ")
+//    verifyUserInput(null)
+//    verifyUserInput("")
+//    verifyUserInput("12345")
+
+//    val person: Person7? = getTheBestPersonInTheWorld()
+//    if (person != null) sendEmailTo(person.email)
+//    getTheBestPersonInTheWorld()?.let { sendEmailTo(it.email) }       //lambda will not run,because fun is always null
+
+//    var email: String? = "yole@example.com"
+//    sendEmailTo(email)      //Type mismatch
+//    email?.let { email -> sendEmailTo(email) }
+//    email?.let { sendEmailTo(it) }
+//    email = null
+//    email?.let { sendEmailTo(it) }
+
+
+//    ignoreNulls("WSF")
+//    ignoreNulls(null)
+
+//    val p1 = Person7("Dmitry", "Jemerov")
+//    val p2 = Person7("Dmitry", "Jemerov")
+//    p(p1 == p2)
+//    p(p1.equals(42))
 
 //    val address = Address("Elsestr. 47",90687,"Munich","Germany")
 //    val address:Address? = null
