@@ -1,4 +1,5 @@
 import java.lang.IllegalArgumentException
+import javax.print.attribute.standard.MediaSize
 
 fun strLen(s: String) = s.length
 fun strLen1(s: String?) = s?.length
@@ -97,24 +98,81 @@ class MyService {
 //    }
 //}
 
-fun <T> printHashCode(t: T) {
+fun <T> printHashCode(t: T) {           //the parameter can be null
     p(t?.hashCode())
 }
 
-fun <T : Any> printHashCode1(t: T) {
+fun <T : Any> printHashCode1(t: T) {    //the parameter can not be null,because T is a subtype of Any
     p(t.hashCode())
 }
 
 fun verifyUserInput(input: String?) {
     if (input.isNullOrBlank()) {
         p("Please fill in the required fields")
-    }else
+    } else
         p(input?.length)
 }
 
+
+fun yellAt(person: Person8) {        //not handle the java's null
+    p(person.name.toUpperCase() + "!!!")
+}
+
+fun yellAt1(person: Person8) {        //handle the java's null
+    p((person.name ?: "Anyone").toUpperCase() + "!!!")
+}
+
+class StringPrinter : StringProcessor {
+    override fun process(value: String) {
+        p(value)
+    }
+}
+
+class NullableStringPrinter : StringProcessor {
+    override fun process(value: String?) {
+        if (value != null) {
+            p(value)
+        }
+    }
+}
+
+fun showProgress(progress: Int) {
+    val percent = progress.coerceIn(0, 100)
+    p("We're $percent% done!")
+}
+
+data class Person10(val name: String,
+                    val age: Int? = null) {
+    fun isOlderThan(other: Person10): Boolean? {
+
+        /***
+         * it not work,can not compare Int?
+         *
+         * if (age >= other.age) {
+         *      return true
+         *  }
+         *
+         *  return null
+         */
+
+
+        if (age == null || other.age == null)
+            return null
+        return age > other.age
+
+    }
+}
+
 fun main(args: Array<String>) {
-    printHashCode("WANG")
-    printHashCode1(5)
+    p(Person10("Sam", 35).isOlderThan(Person10("Amy", 42)))     //false
+    p(Person10("Sam", 35).isOlderThan(Person10("Jane")))            //null
+
+//    showProgress(146)
+//    yellAt1(Person8(null))      //Anyone
+//    yellAt(Person8(null))       //java.lang.IllegalStateException: person.name must not be null
+
+//    printHashCode("WANG")
+//    printHashCode1(5)
 
 //    verifyUserInput(" ")
 //    verifyUserInput(null)
