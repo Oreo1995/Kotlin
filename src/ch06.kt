@@ -1,4 +1,9 @@
+import java.io.BufferedReader
+import java.io.File
+import java.io.LineNumberReader
+import java.io.StringReader
 import java.lang.IllegalArgumentException
+import java.lang.NumberFormatException
 import javax.print.attribute.standard.MediaSize
 
 fun strLen(s: String) = s.length
@@ -163,9 +168,161 @@ data class Person10(val name: String,
     }
 }
 
+fun foo1(l: Long) = p(l)
+
+interface Processor1<T> {
+    fun process(): T
+}
+
+class NoResultProcessor : Processor1<Unit> {
+    override fun process() {
+        // do stuff
+    }
+}
+
+class ResultProcess : Processor1<Int> {
+    override fun process(): Int {
+        val a = 5;
+        val c = a * 3;
+        return c;
+    }
+}
+
+fun fail(message: String): Nothing {
+    throw IllegalArgumentException(message)
+}
+
+fun readNumbers(reader: BufferedReader): List<Int?> {
+    val result = ArrayList<Int?>()
+    for (line in reader.lineSequence()) {
+        try {
+            val number = line.toInt()
+            result.add(number)
+        } catch (e: NumberFormatException) {
+            result.add(null)
+        }
+    }
+    return result
+}
+
+fun addValidNumbers(numbers: List<Int?>) {
+    var sumOfValidNumbers = 0
+    var invalidNumbers = 0
+    for (number in numbers) {
+        if (number != null) {
+            sumOfValidNumbers += number
+        } else {
+            invalidNumbers++
+        }
+    }
+    p("Sum of valid numbers: $sumOfValidNumbers")
+    p("Invalid numbers: $invalidNumbers")
+}
+
+fun addValidNumbers1(numbers: List<Int?>) {
+    val validNumbers = numbers.filterNotNull()
+    p("Sum of valid numbers: ${validNumbers.sum()}")
+    p("Invalid numbers: ${numbers.size - validNumbers.size}")
+}
+
+fun <T> copyElements(source: Collection<T>,
+                     target: MutableCollection<T>) {
+    for (item in source) {
+        target.add(item)
+    }
+}
+
+fun printInUppercase(list: List<String>) {      //define the parameter as only read
+    p(CollectionUtils.uppercaseAll(list))
+    p(list.first())
+}
+
+//write in kotlin of the interface FileContentProcessor.java
+//the list is nullable,because some file is binary file,their content cannot display in text
+//list's value cannot be null,because the line of file not null forever
+//the list is read only,because the value of list is file's content that cannot be update
+class FileIndexer : FileContentProcessor {
+    override fun processContents(path: File, binaryContents: ByteArray?, textContents: List<String>?) {
+        //.....
+    }
+}
+
+class PersonParser : DataParser<Person10> {
+    override fun parseData(input: String,
+                           output: MutableList<Person10>,
+                           errors: MutableList<String?>) {
+        //...
+    }
+}
+
+fun arrayDemo(args: Array<String>) {
+    for (i in args.indices) {
+        p("Argument $i is: ${args[i]}")
+    }
+}
+
+fun arrayDemo1(args: Array<String>) {
+    args.forEachIndexed{ index,element->
+        p("Arguments $index is: $element")
+    }
+}
+
 fun main(args: Array<String>) {
-    p(Person10("Sam", 35).isOlderThan(Person10("Amy", 42)))     //false
-    p(Person10("Sam", 35).isOlderThan(Person10("Jane")))            //null
+    val fiveZeros = IntArray(5)     //Factory function init,their value is 0
+    val fiveZerosToo = intArrayOf(0, 0, 0, 0, 0)
+
+    val squares = IntArray(5) { i -> (i + 1) * (i + 1) }        //lambda init
+    p(squares.joinToString())
+
+//    val strings = listOf("a", "b", "c")
+//    p("%s/%s/%s".format(*strings.toTypedArray()))
+
+//    val letters = Array<String>(26){i->('a'+i).toString()}
+//    p(letters.joinToString ("" ))
+//    arrayDemo(letters)
+
+//    val list = listOf("a","b","c")
+//    printInUppercase(list)
+
+//    val source:Collection<Int> = arrayListOf(3,5,7)
+//    val target:MutableCollection<Int> = arrayListOf(1)
+//    copyElements(source,target)     //target can not be instead by source,even if its value can be update
+//    p(target)
+
+//    val reader = BufferedReader(StringReader("123456\ns424dfj\n13254"))
+////    p(readNumbers(reader).toString())
+//
+//    val numbers = readNumbers(reader)
+////    addValidNumbers(numbers)
+//    addValidNumbers1(numbers)
+
+//    fail("Error occurred")
+//    val company = Company("Anly",
+//            Address("403", 572000, "HongKong", "China"))
+//    val company1 = Company("Anly", null)
+//    val company2:Company? = null
+//
+//    val address = company2?.address ?: fail("No address")
+//    p(address.city)
+//    val result = ResultProcess()
+//    p(result.process())
+
+//    val b: Byte = 1
+//    val l = b + 1L
+//    foo1(42)
+//    p(l)
+
+//    val i = 1
+////    val l:Long = i
+//    val l:Long = i.toLong()     //must explicitly cast the type
+//
+//    val x = 1
+//    val list = listOf(1L,2L,3L)
+////    x in list
+//    p(x.toLong() in list)   //must explicitly cast the type
+
+//    p(Person10("Sam", 35).isOlderThan(Person10("Amy", 42)))     //false
+//    p(Person10("Sam", 35).isOlderThan(Person10("Jane")))            //null
 
 //    showProgress(146)
 //    yellAt1(Person8(null))      //Anyone
