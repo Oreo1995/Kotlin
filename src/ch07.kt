@@ -1,5 +1,12 @@
+import org.omg.CORBA.portable.Delegate
+import java.beans.PropertyChangeListener
+import java.beans.PropertyChangeSupport
+import java.lang.reflect.Type
 import java.math.BigDecimal
 import java.security.cert.PolicyNode
+import java.time.LocalDate
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
 
 data class Point(val x: Int, val y: Int) {
     //override +
@@ -88,14 +95,262 @@ operator fun MutablePoint.set(index: Int, value: Int) {
 data class Rectangle1(val upperLeft: Point, val lowerRight: Point)
 
 operator fun Rectangle1.contains(p: Point): Boolean {
-    return p.x in upperLeft.x until lowerRight.x &&     //not contains lowerRight.x
-            p.y in upperLeft.y until lowerRight.y       //not contains lowerRight.y
+    return p.x in upperLeft.x until lowerRight.x &&     //not contains lowerRight.x     <
+            p.y in upperLeft.y until lowerRight.y       //not contains lowerRight.y     <
+}
+
+operator fun ClosedRange<LocalDate>.iterator(): Iterator<LocalDate> =
+        object : Iterator<LocalDate> {
+            var current = start
+            override fun hasNext(): Boolean =
+                    current <= endInclusive
+
+            override fun next() = current.apply {
+                current = plusDays(1)   //current date plus 1
+            }
+
+//            override fun next(): LocalDate {
+//                return current.apply {
+//                    current.plusDays(2)
+//                }
+//            }
+        }
+
+//手动为非数据类生成组件函数（解析声明）
+class Point2(val x: Int, val y: Int) {
+    operator fun component1() = x
+    operator fun component2() = y
+}
+
+data class NameComponents(val name: String,
+                          val extension: String)
+
+fun splitFileName(fullName: String): NameComponents {
+    val result = fullName.split('.', limit = 2)
+    return NameComponents(result[0], result[1])
+}
+
+fun splitFileName1(fullName: String): NameComponents {
+    val (name, extension) = fullName.split('.', limit = 2)
+    return NameComponents(name, extension)
+}
+
+fun printEntries(map: Map<String, String>) {
+//    kt给map增加了一个扩展的iterator函数
+//    Map.Entry上的扩展函数component1和component2，分别返回它的键和值
+    for ((key, value) in map) {
+        p("$key -> $value")
+    }
+
+    //前面的循环被转换成了下面的代码。
+//    for (entry in map.entries) {
+//        val key = entry.component1()
+//        val value = entry.component2()
+//    }
+}
+
+//编译器创建一个隐藏的辅助属性，并使用委托对象的实列进行初始化，初始属性p会委托给该实列。
+//class Foo{
+//    private val delegate = Delegate()
+//    val p:Type            //p的访问都会调用对应的delegate的getValue和setValue方法
+//        set(value:Type) = delegate.setValue(...,value)
+//        get() = delegate.getValue(...)
+//}
+
+//class Delegate{
+//    operator fun getValue(){...}                      //getter
+//    operator fun setValue(...,value:Type){...}        //setter
+//}
+
+//委托属性的基本语法
+//class Foo{
+//    val p:Type by Delegate()      //关键字"by"把属性关联上委托对象
+//}
+
+class Email {/*...*/ }
+
+fun loadEmails(person: Person11): List<Email> {
+    p("Load emails for ${person.name}")
+    return listOf(/*...*/)
+}
+
+fun loadEmails(person: Person12): List<Email> {
+    p("Load emails for ${person.name}")
+    return listOf(/*...*/)
+}
+
+//线程不安全
+class Person11(val name: String) {
+    private var _emails: List<Email>? = null         //_emails属性用来保存数据，关联委托
+    val emails: List<Email>
+        get() {
+            if (_emails == null) {
+                _emails = loadEmails(this)
+            }
+            return _emails!!        //如果已经加载，直接返回
+        }
+}
+
+//默认情况下，lazy是线程安全的
+class Person12(val name: String) {
+    val emails by lazy { loadEmails(this) }         //等同于11中那么复杂的初始化方法
+}
+
+open class PropertyChangeAware {
+    protected val changeSupport = PropertyChangeSupport(this)
+
+    fun addPropertyChangeListener(listener: PropertyChangeListener) {
+        changeSupport.addPropertyChangeListener(listener)
+    }
+
+    fun removePropertyChangeListener(listener: PropertyChangeListener) {
+        changeSupport.removePropertyChangeListener(listener)
+    }
+}
+
+//监听器监听属性变化并通知
+class Person13(
+        val name: String, age: Int, salary: Int
+) : PropertyChangeAware() {
+    var age: Int = age
+        set(newValue) {
+            val oldValue = field
+            field = newValue
+            changeSupport.firePropertyChange("age", oldValue, newValue)
+        }
+
+    var salary: Int = salary
+        set(newValue) {
+            val oldValue = field                    //field标识符允许你访问属性背后的支持字段
+            field = newValue
+            changeSupport.firePropertyChange(       //当属性变化时，通知监听器
+                    "salary", oldValue, newValue)
+        }
+}
+
+//提取13中的setter代码，上面有很多重复的
+class ObservableProperty(
+        val propName: String, var propValue: Int,
+        val changeSupport: PropertyChangeSupport
+) {
+    fun getValue(): Int = propValue
+    fun setValue(newValue: Int) {
+        val oldValue = propValue
+        propValue = newValue
+        changeSupport.firePropertyChange(propName, oldValue, newValue)
+    }
+}
+
+class Person14(
+        val name: String, age: Int, salary: Int
+) : PropertyChangeAware() {
+    val _age = ObservableProperty("age", age, changeSupport)
+    var age: Int
+        get() = _age.getValue()
+        set(value) {
+            _age.setValue(value)
+        }
+
+    val _salary = ObservableProperty("salary", salary, changeSupport)
+    var salary: Int
+        get() = _salary.getValue()
+        set(value) {
+            _salary.setValue(value)
+        }
+}
+
+class ObservableProperty1(
+        var propValue: Int, val changeSupport: PropertyChangeSupport
+) {
+    operator fun getValue(p: Person15, prop: KProperty<*>): Int = propValue
+    operator fun setValue(p: Person15, prop: KProperty<*>, newValue: Int) {
+        val oldValue = propValue
+        propValue = newValue
+        changeSupport.firePropertyChange(prop.name, oldValue, newValue)
+    }
+}
+
+class Person15(
+        val name: String, age: Int, salary: Int
+) : PropertyChangeAware() {
+
+    var age: Int by ObservableProperty1(age, changeSupport)
+    var salary: Int by ObservableProperty1(salary, changeSupport)
+}
+
+class Person16(
+        val name: String, age: Int, salary: Int
+) : PropertyChangeAware() {
+
+    private val observer = { prop: KProperty<*>, oldValue: Int, newValue: Int ->
+        changeSupport.firePropertyChange(prop.name, oldValue, newValue)
+    }
+
+    var age: Int by Delegates.observable(age, observer)     //使用Delegates.observable来实现属性修改的通知
+    var salary: Int by Delegates.observable(salary, observer)
 }
 
 fun main(args: Array<String>) {
-    val rect = Rectangle1(Point(10, 20), Point(50, 50))
-    p(Point(20, 30) in rect)     //right object will invoke contains function,left object is a parameter
-    p(Point(5, 5) in rect)
+
+    val p = Person16("Sun", 23, 8000)
+    p.addPropertyChangeListener(        //关联监听器，用于监听属性修改
+            PropertyChangeListener { event ->
+                p("Property ${event.propertyName} changed " +
+                        "from ${event.oldValue} to ${event.newValue}")
+            }
+    )
+    p.age = 18
+    p.salary = 15000
+
+//    val p = Person12("Bob")
+//    p.emails
+//    p.emails
+
+//    val p = Person11("Alice")
+//    p.emails        //此方法只执行一次，因此下面的方法不会执行...第一次访问会加载邮件
+//    p.emails
+
+//    val foo = Foo()
+//    val oldValue = foo.p        //通过调用delegate.getValue(...)来实现属性的更改
+//    foo.p = newValue            //通过调用delegate.setValue(...,newValue)来实现属性的修改
+
+//    val map = mapOf("Oracle" to "Java", "JetBrains" to "Kotlin")
+//    printEntries(map)
+
+//    val (name, ext) = splitFileName("example.kt")
+//    p(name)
+//    p(ext)
+
+    //解析声明
+//    val p = Point(10, 20)
+//    val (x, y) = p      //可以转换成下面这种
+//    val a = p.component1()
+//    val b = p.component2()
+//    p(x)
+//    p(y)
+
+//    val newYear = LocalDate.ofYearDay(2017, 1)
+//    val daysOff = newYear.minusDays(1)..newYear
+//    for(dayOff in daysOff){
+//        println(dayOff)
+//    }
+
+//    val a = "abc"
+//    for(c in a)         //operator fun CharSequence.iterator():CharIterator
+//        print(c)
+
+//    val n = 9
+//    p(0..n + 1)
+//    p(0..(n + 1))     //rangeTo运算符的优先级低于算术运算符，但是最好把参数括起来以免混淆
+//    (0..n).forEach { print(it) }        //0..n.forEach()不会被编译，因为必须把区间表达式括起来才能调用它的方法
+
+//    val now = LocalDate.now()
+//    val vacation = now..now.plusDays(10)    //create a close vacation from today to after 10 days,range to
+//    p(now.plusWeeks(1) in vacation)     //check a date is belong to the vacation or not
+
+//    val rect = Rectangle1(Point(10, 20), Point(50, 50))
+//    p(Point(20, 30) in rect)     //right object will invoke the contains function,and left object is a parameter
+//    p(Point(5, 5) in rect)
 
 //    val p = MutablePoint(10,20)
 //    p[0] = 5
