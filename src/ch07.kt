@@ -290,17 +290,35 @@ class Person16(
     var salary: Int by Delegates.observable(salary, observer)
 }
 
-fun main(args: Array<String>) {
+class Person17 {
+    private val _attributes = hashMapOf<String, String>()
+    fun setAttribute(attrName: String, value: String) {
+        _attributes[attrName] = value
+    }
 
-    val p = Person16("Sun", 23, 8000)
-    p.addPropertyChangeListener(        //关联监听器，用于监听属性修改
-            PropertyChangeListener { event ->
-                p("Property ${event.propertyName} changed " +
-                        "from ${event.oldValue} to ${event.newValue}")
-            }
-    )
-    p.age = 18
-    p.salary = 15000
+//    val name: String
+//        get() = _attributes["name"]!!
+
+    val name: String by _attributes      //把map作为委托属性
+}
+
+fun main(args: Array<String>) {
+    val p = Person17()
+    val data = mapOf<String, String>("name" to "Dmitry", "company" to "JetBrains")
+    for ((attrName, value) in data) {
+        p.setAttribute(attrName, value)
+    }
+    p(p.name)
+
+//    val p = Person16("Sun", 23, 8000)
+//    p.addPropertyChangeListener(        //关联监听器，用于监听属性修改
+//            PropertyChangeListener { event ->
+//                p("Property ${event.propertyName} changed " +
+//                        "from ${event.oldValue} to ${event.newValue}")
+//            }
+//    )
+//    p.age = 18
+//    p.salary = 15000
 
 //    val p = Person12("Bob")
 //    p.emails
