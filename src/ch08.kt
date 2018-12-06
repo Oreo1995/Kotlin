@@ -1,4 +1,4 @@
-import java.lang.StringBuilder
+import kotlin.text.StringBuilder
 
 //把lambda表达式保存在局部变量中，编译器推到出这两个变量具有函数类型
 //x,y被省略的原因：因为他们的类型已经在函数的变量声明部分指定了，
@@ -37,12 +37,55 @@ fun String.filter(predicate: (Char) -> (Boolean)): String {
     return sb.toString()
 }
 
+fun processTheAnswer(f: (Int) -> Int) {
+    println(f(42))
+}
+
+//默认的lambda参数
+fun <T> Collection<T>.joinToString(
+        separator: String = "， ",
+        prefix: String = "",
+        postfix: String = "",
+        transform: (T) -> String = { it.toString() }
+): String {
+    val result = StringBuilder(prefix)
+    for ((index, element) in this.withIndex()) {
+        if (index > 0) result.append(separator)
+        result.append(transform(element))
+    }
+    result.append(postfix)
+    return result.toString()
+}
+
+//使用函数类型的可空参数
+fun <T> Collection<T>.joinToString1(
+        separator: String = "， ",
+        prefix: String = "",
+        postfix: String = "",
+        transform: ((T) -> String)? = null          //声明一个函数类型的可空参数
+): String {
+    val result = StringBuilder(prefix)
+    for ((index, element) in this.withIndex()) {
+        if (index > 0) result.append(separator)
+        val str = transform?.invoke(element)        //使用安全调用语法的调用函数
+                ?: element.toString()               //使用Elvis运算符处理回调没有被指定的情况
+        result.append(str)
+    }
+    result.append(postfix)
+    return result.toString()
+}
+
 fun main(args: Array<String>) {
+    val letters = listOf("Alpha", "Beta")
+    p(letters.joinToString())               //使用默认的转换函数
+    p(letters.joinToString { it.toLowerCase() })                //传递一个lambda作为参数
+    p(letters.joinToString(separator = "! ", postfix = "! ",     //使用命名参数语法传递几个参数，包括一个lambda
+            transform = { it.toUpperCase() }))
 //    twoAndThree(sum)
 //    twoAndThree { a, b -> a + b }
 //    twoAndThree { a, b -> a * b }
 
-    p("ab1c".filter { it in 'a'..'z' })     //传递一个lambda作为"predicate"参数
+//    p("ab1c".filter { it in 'a'..'z' })     //传递一个lambda作为"predicate"参数
 
 //    val url = "http://kotl.in"
 //    performRequest(url) { code, content -> /*...*/ }    //可以使用API中提供的参数名字作为lambda参数的名字。。。

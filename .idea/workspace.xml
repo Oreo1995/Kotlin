@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="386190ad-4819-42fe-a6bd-e5d519b02407" name="Default" comment="" />
+    <list default="true" id="386190ad-4819-42fe-a6bd-e5d519b02407" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TestUX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TestUX.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ch08.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/ch08.kt" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,8 +31,8 @@
       <file leaf-file-name="ch07.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ch07.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="298" column="22" lean-forward="true" selection-start-line="298" selection-start-column="22" selection-end-line="298" selection-end-column="22" />
+            <state relative-caret-position="8120">
+              <caret line="298" column="22" selection-start-line="298" selection-start-column="22" selection-end-line="298" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -36,8 +40,20 @@
       <file leaf-file-name="ch08.kt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ch08.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="49" selection-start-line="49" selection-end-line="49" />
+            <state relative-caret-position="201">
+              <caret line="69" column="67" selection-start-line="69" selection-start-column="67" selection-end-line="69" selection-end-column="67" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TestUX.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/TestUX.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="789">
+              <caret line="41" column="11" lean-forward="true" selection-start-line="41" selection-start-column="11" selection-end-line="41" selection-end-column="11" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -45,7 +61,7 @@
       <file leaf-file-name="ch01.kt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ch01.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
+            <state relative-caret-position="112">
               <caret line="5" selection-start-line="5" selection-end-line="5" />
               <folding>
                 <element signature="e#0#56#0" expanded="true" />
@@ -126,7 +142,6 @@
         <option value="$PROJECT_DIR$/src/Hello.kt" />
         <option value="$PROJECT_DIR$/src/join.kt" />
         <option value="$PROJECT_DIR$/src/strings/join.kt" />
-        <option value="$PROJECT_DIR$/src/TestUX.java" />
         <option value="$PROJECT_DIR$/src/ch03.kt" />
         <option value="$PROJECT_DIR$/src/ch02.kt" />
         <option value="$PROJECT_DIR$/src/ch04.kt" />
@@ -140,6 +155,7 @@
         <option value="$PROJECT_DIR$/src/DataParser.java" />
         <option value="$PROJECT_DIR$/src/ch06.kt" />
         <option value="$PROJECT_DIR$/src/ch07.kt" />
+        <option value="$PROJECT_DIR$/src/TestUX.java" />
         <option value="$PROJECT_DIR$/src/ch08.kt" />
       </list>
     </option>
@@ -168,7 +184,7 @@
     </navigator>
     <panes>
       <pane id="AndroidView" />
-      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -185,7 +201,7 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -219,6 +235,11 @@
     </option>
   </component>
   <component name="RunManager" selected="Kotlin.Ch08Kt">
+    <configuration name="TestUX" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TestUX" />
+      <module name="Kotlin" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     </configuration>
@@ -237,16 +258,6 @@
         <value defaultName="singleModule" />
       </option>
       <patterns />
-    </configuration>
-    <configuration name="Ch04Kt" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
-      <module name="Kotlin" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" value="Ch04Kt" />
-      <option name="WORKING_DIRECTORY" />
     </configuration>
     <configuration name="Ch05Kt" type="JetRunConfigurationType" factoryName="Kotlin" temporary="true" nameIsGenerated="true">
       <module name="Kotlin" />
@@ -311,19 +322,19 @@
       <listeners />
     </configuration>
     <list>
-      <item itemvalue="Kotlin.Ch04Kt" />
       <item itemvalue="Kotlin.Ch05Kt" />
       <item itemvalue="Kotlin.Ch06Kt" />
       <item itemvalue="Kotlin.Ch07Kt" />
       <item itemvalue="Kotlin.Ch08Kt" />
+      <item itemvalue="Application.TestUX" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Kotlin.Ch08Kt" />
+        <item itemvalue="Application.TestUX" />
         <item itemvalue="Kotlin.Ch07Kt" />
         <item itemvalue="Kotlin.Ch06Kt" />
         <item itemvalue="Kotlin.Ch05Kt" />
-        <item itemvalue="Kotlin.Ch04Kt" />
       </list>
     </recent_temporary>
   </component>
@@ -357,15 +368,17 @@
       <workItem from="1542721701853" duration="7000000" />
       <workItem from="1543244799539" duration="2738000" />
       <workItem from="1543497585504" duration="7899000" />
-      <workItem from="1543757933129" duration="7588000" />
+      <workItem from="1543757933129" duration="7709000" />
+      <workItem from="1544109744833" duration="2798000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="106577000" />
+    <option name="totallyTimeSpent" value="109496000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1552" height="840" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -377,8 +390,7 @@
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32352942" />
-      <window_info anchor="right" id="Coverage" side_tool="true" weight="0.32899868" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32352942" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
@@ -389,8 +401,9 @@
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Coverage" order="4" side_tool="true" weight="0.32899868" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -401,15 +414,15 @@
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30530974" />
       <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18489583" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
@@ -419,13 +432,13 @@
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info id="Capture Tool" order="5" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32890856" />
       <window_info anchor="right" id="Maven Projects" order="8" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info id="Favorites" order="6" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -436,26 +449,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/src/ch08.kt</url>
-          <line>34</line>
-          <properties />
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
       <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/out/production/Kotlin/JoinKt.class" />
-    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/common/kotlin/collections/Collections.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="76" lean-forward="true" selection-start-line="76" selection-end-line="76" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib.jar!/kotlin/Pair.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="224">
@@ -544,13 +541,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/common/generated/_Collections.kt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="1115" column="9" lean-forward="true" selection-start-line="1115" selection-start-column="9" selection-end-line="1115" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/common/generated/_Sequences.kt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2277">
@@ -566,18 +556,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/hello.http" />
-    <entry file="file://$PROJECT_DIR$/src/TestUX.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" column="16" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#440#441#0" expanded="true" />
-            <element signature="e#462#463#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Person8.java">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -786,14 +764,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ch07.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="298" column="22" lean-forward="true" selection-start-line="298" selection-start-column="22" selection-end-line="298" selection-end-column="22" />
+        <state relative-caret-position="8120">
+          <caret line="298" column="22" selection-start-line="298" selection-start-column="22" selection-end-line="298" selection-end-column="22" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ch01.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="140">
+        <state relative-caret-position="112">
           <caret line="5" selection-start-line="5" selection-end-line="5" />
           <folding>
             <element signature="e#0#56#0" expanded="true" />
@@ -801,10 +779,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/kotlin/jvm/functions/Functions.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/kotlin/Unit.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="21" column="14" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/TestUX.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="789">
+          <caret line="41" column="11" lean-forward="true" selection-start-line="41" selection-start-column="11" selection-end-line="41" selection-end-column="11" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$KOTLIN_BUNDLED$/lib/kotlin-stdlib-sources.jar!/common/generated/_Collections.kt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="1294" column="27" selection-start-line="1294" selection-start-column="27" selection-end-line="1294" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ch08.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
+        <state relative-caret-position="201">
+          <caret line="69" column="67" selection-start-line="69" selection-start-column="67" selection-end-line="69" selection-end-column="67" />
         </state>
       </provider>
     </entry>

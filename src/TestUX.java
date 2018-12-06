@@ -1,4 +1,8 @@
 //import strings.JoinKt;
+
+import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import strings.StringFunctions;
 
 import java.util.ArrayList;
@@ -15,6 +19,27 @@ public class TestUX {
     }
 
     public static void main(String[] args) {
-        test();
+//        test();
+        //Java1.8
+        Ch08Kt.processTheAnswer(number -> number + 1);
+
+        //<Java1.8
+        Ch08Kt.processTheAnswer(
+                new Function1<Integer, Integer>() {
+                    @Override
+                    public Integer invoke(Integer number) {
+                        System.out.println(number);
+                        return number + 1;
+                    }
+                }
+        );
+
+        List<String> strings = new ArrayList<>();
+        strings.add("42");
+        CollectionsKt.forEach(strings, s -> {       //可以再Java代码中使用Kotlin标准库中的函数
+            System.out.println(s);
+            return Unit.INSTANCE;                   //必须要显示地返回一个Unit类型的值
+        });
     }
+
 }
