@@ -75,12 +75,112 @@ fun <T> Collection<T>.joinToString1(
     return result.toString()
 }
 
+enum class Delivery { STANDARD, EXPEDITED }
+
+class Order(val itemCount: Int)
+
+//定义一个返回函数类型的函数
+fun getShippingCostCalculator(
+        delivery: Delivery): (Order) -> Double {            //声明一个返回函数类型的函数
+    if (delivery == Delivery.EXPEDITED) {
+        return { order -> 6 + 2.1 * order.itemCount }       //返回lambda
+    }
+    return { order -> 1.2 * order.itemCount }               //返回lambda
+}
+
+data class Person18(
+        val firstName: String,
+        val lastName: String,
+        val phoneNumber: String?
+)
+
+//显示以特定字符开头的联系人
+class ContactListFilters {
+    var prefix: String = ""
+    var onlyWithPhoneNumber: Boolean = false
+
+    fun getPredicate(): (Person18) -> Boolean {     //声明一个返回函数的函数
+        val startsWithPrefix = { p: Person18 ->
+            p.firstName.startsWith(prefix) || p.lastName.startsWith(prefix)
+        }
+
+        if (!onlyWithPhoneNumber) {
+            return startsWithPrefix             //返回一个函数类型的变量
+        }
+        return {
+            startsWithPrefix(it) && it.phoneNumber != null          //从这个函数返回一个lambda
+        }
+    }
+}
+
+data class SiteVisit(
+        val path:String,
+        val duration:Double,
+        val os:OS
+)
+
+enum class OS{WINDOWS,LINUX,MAC,IOS,ANDROID}
+
+val log = listOf(
+        SiteVisit("/", 34.0, OS.WINDOWS),
+        SiteVisit("/", 22.0, OS.MAC),
+        SiteVisit("/login",12.0,OS.WINDOWS),
+        SiteVisit("/signup",8.0,OS.IOS),
+        SiteVisit("/",16.3,OS.ANDROID)
+)
+
+//使用硬编码的过滤器分析站点访问数据
+val averageWindowsDuration = log
+        .filter { it.os ==OS.WINDOWS}
+        .map (SiteVisit::duration )
+        .average()
+
+//用一个普通方法去除重复代码
+fun List<SiteVisit>.averageDurationFor(os:OS) =
+        filter { it.os == os }.map(SiteVisit::duration).average()
+
+//用一个复杂的硬编码函数分析站点访问数据
+val averageMobileDuration = log
+        .filter { it.os in setOf(OS.IOS,OS.ANDROID)}
+        .map(SiteVisit::duration)
+        .average()
+
+//用一个高阶函数去除重复代码(条件查询)
+fun List<SiteVisit>.averageDurationFor(predicate: (SiteVisit) -> Boolean) =
+        filter(predicate).map(SiteVisit::duration).average()
+
 fun main(args: Array<String>) {
-    val letters = listOf("Alpha", "Beta")
-    p(letters.joinToString())               //使用默认的转换函数
-    p(letters.joinToString { it.toLowerCase() })                //传递一个lambda作为参数
-    p(letters.joinToString(separator = "! ", postfix = "! ",     //使用命名参数语法传递几个参数，包括一个lambda
-            transform = { it.toUpperCase() }))
+    p(log.averageDurationFor {
+        it.os in setOf(OS.ANDROID,OS.IOS)
+    })
+    p(log.averageDurationFor {
+        it.os == OS.IOS && it.path == "/signup" })
+//    p(averageMobileDuration)
+//    p(log.averageDurationFor(OS.WINDOWS))
+//    p(log.averageDurationFor(OS.MAC))
+//    p(averageWindowsDuration)
+
+//    val contacts = listOf(Person18("Dmitry", "Jemerov", "123-4567"),
+//            Person18("Svetlana", "Isakova", null))
+//    val contactListFilters = ContactListFilters()
+//    with(contactListFilters) {
+//        prefix = "Dm"
+//        onlyWithPhoneNumber = true
+//    }
+//    p(contacts.filter(
+//            contactListFilters.getPredicate()       //将getPredicate返回的函数作为参数传递给filter函数
+//    ))
+
+//    val calculator =                //将返回的函数保存在变量中
+//            getShippingCostCalculator(Delivery.EXPEDITED)
+//    p(calculator(Order(3)))     //调用返回的函数
+
+//    val letters = listOf("Alpha", "Beta")
+//    p(letters.joinToString())               //使用默认的转换函数
+//    p(letters.joinToString { it.toLowerCase() })                //传递一个lambda作为参数
+//    p(letters.joinToString(separator = "! ", postfix = "! ",     //使用命名参数语法传递几个参数，包括一个lambda
+//            transform = { it.toUpperCase() }))
+
 //    twoAndThree(sum)
 //    twoAndThree { a, b -> a + b }
 //    twoAndThree { a, b -> a * b }
