@@ -1,3 +1,8 @@
+import com.sun.deploy.util.SyncAccess
+import com.sun.org.apache.xpath.internal.operations.Bool
+import java.io.BufferedReader
+import java.io.FileReader
+import java.util.concurrent.locks.Lock
 import kotlin.text.StringBuilder
 
 //把lambda表达式保存在局部变量中，编译器推到出这两个变量具有函数类型
@@ -114,34 +119,34 @@ class ContactListFilters {
 }
 
 data class SiteVisit(
-        val path:String,
-        val duration:Double,
-        val os:OS
+        val path: String,
+        val duration: Double,
+        val os: OS
 )
 
-enum class OS{WINDOWS,LINUX,MAC,IOS,ANDROID}
+enum class OS { WINDOWS, LINUX, MAC, IOS, ANDROID }
 
 val log = listOf(
         SiteVisit("/", 34.0, OS.WINDOWS),
         SiteVisit("/", 22.0, OS.MAC),
-        SiteVisit("/login",12.0,OS.WINDOWS),
-        SiteVisit("/signup",8.0,OS.IOS),
-        SiteVisit("/",16.3,OS.ANDROID)
+        SiteVisit("/login", 12.0, OS.WINDOWS),
+        SiteVisit("/signup", 8.0, OS.IOS),
+        SiteVisit("/", 16.3, OS.ANDROID)
 )
 
 //使用硬编码的过滤器分析站点访问数据
 val averageWindowsDuration = log
-        .filter { it.os ==OS.WINDOWS}
-        .map (SiteVisit::duration )
+        .filter { it.os == OS.WINDOWS }
+        .map(SiteVisit::duration)
         .average()
 
 //用一个普通方法去除重复代码
-fun List<SiteVisit>.averageDurationFor(os:OS) =
+fun List<SiteVisit>.averageDurationFor(os: OS) =
         filter { it.os == os }.map(SiteVisit::duration).average()
 
 //用一个复杂的硬编码函数分析站点访问数据
 val averageMobileDuration = log
-        .filter { it.os in setOf(OS.IOS,OS.ANDROID)}
+        .filter { it.os in setOf(OS.IOS, OS.ANDROID) }
         .map(SiteVisit::duration)
         .average()
 
@@ -149,12 +154,116 @@ val averageMobileDuration = log
 fun List<SiteVisit>.averageDurationFor(predicate: (SiteVisit) -> Boolean) =
         filter(predicate).map(SiteVisit::duration).average()
 
-fun main(args: Array<String>) {
-    p(log.averageDurationFor {
-        it.os in setOf(OS.ANDROID,OS.IOS)
+inline fun <T> synchronized(lock: Lock, action: () -> T): T {
+    lock.lock()
+    try {
+        return action()
+    } finally {
+        lock.unlock()
+    }
+}
+
+fun foo(l: Lock) {
+    p("Before sync")
+    synchronized(l) {
+        p("Action")
+    }
+    p("After sync")
+}
+
+//Lock.withLock等同于java中的资源管理synchronized  //(try/finally)
+
+//使用use函数管理资源
+//use函数等同于java中的try-with-resource
+//use函数是一个扩展函数，别用来操作可关闭的资源，无论是否抛出异常，资源都会被关闭，而且是内联的
+fun readFirstLineFromFile(path: String): String {
+    BufferedReader(FileReader(path)).use { br ->
+        return br.readLine()        //使用了非局部return从readFirstLineFromFile函数中返回了一个值
+    }
+}
+
+data class Person19(val name: String, val age: Int)
+
+val people = listOf(Person19("Alice", 29), Person19("Bob", 31))
+
+fun lookForAlice(people: List<Person19>) {
+    for (person in people) {
+        if (person.name == "Alice") {
+            p("Found")
+            return
+        }
+    }
+    p("Alice is not found")
+}
+
+//lambda中的返回语句，从一个封闭的函数返回
+fun lookForALice1(people: List<Person19>) {
+    people.forEach {
+        if (it.name == "Alice") {
+            p("Found")
+            return      //和上面的结果一样  //返回到lookForAlice1
+        }
+    }
+    p("Alice is not found")
+}
+
+//从lambda返回：使用标签返回，一个lambda表达式的标签不能多于一个
+fun lookForAlice2(people: List<Person19>) {
+    people.forEach lable@{
+        //lambda标签
+        if (it.name == "Alice") return@lable        //返回表达式标签
+    }
+    p("Alice might be somewhere")               //这一行总是被打印出来
+}
+
+
+//用函数名做return标签
+fun lookForAlice4(people: List<Person19>) {
+    people.forEach {
+        if (it.name == "Alice") return@forEach       //return@forEach从lambda表达式中返回
+    }
+    p("Alice might be somewhere")
+}
+
+//匿名函数：默认使用局部返回
+//局部返回的语法相当冗长，如果一个lambda包含多个返回语句会变得更加笨重。解决方案是，
+//可以使用另一种可选的语法来传递代码块：匿名函数
+fun lookForAlice5(people: List<Person19>) {
+    people.forEach(fun(person) {        //使用匿名函数取代lambda表达式
+        if (person.name == "Alice") return      //return语句指向最近的函数：一个匿名函数        //返回到fun(person)
+        p("${person.name} is not Alice")
     })
-    p(log.averageDurationFor {
-        it.os == OS.IOS && it.path == "/signup" })
+}
+
+fun main(args: Array<String>) {
+    //在filter中使用匿名函数
+    people.filter(fun(person): Boolean {
+        return person.age < 30
+    })
+
+    //使用表达式体匿名函数
+    people.filter(fun(person) = person.age < 30)
+
+//    lookForAlice5(people)
+
+//    p(StringBuilder().apply sb@{        //这个lambda的隐式接收者可以通过this@sb访问
+//        listOf(1,2,3).apply {           //this只想作用域内最近的隐式接收者
+//            this@sb.append(this.toString())     //所用隐式接收者都可以被访问，外层的接收者通过显示的标签访问
+//        }
+//    })
+
+//    lookForAlice2(people)
+
+//    val l = Lock()
+//    foo(l)
+
+//    p(log.averageDurationFor {
+//        it.os in setOf(OS.ANDROID, OS.IOS)
+//    })
+//    p(log.averageDurationFor {
+//        it.os == OS.IOS && it.path == "/signup"
+//    })
+
 //    p(averageMobileDuration)
 //    p(log.averageDurationFor(OS.WINDOWS))
 //    p(log.averageDurationFor(OS.MAC))
