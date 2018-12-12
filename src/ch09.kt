@@ -1,5 +1,7 @@
 import java.lang.Appendable
 import java.lang.IllegalArgumentException
+import java.util.*
+import javax.xml.ws.Service
 
 val authors = listOf("Dmitry", "Svetlana")      //类型推导
 val readers: MutableList<String> = mutableListOf()
@@ -72,8 +74,55 @@ fun printSum1(c: Collection<Int>) {
     }
 }
 
+//fun <T> isA1(value:Any) = value is T        //Error: Cannot check for instance of erased type: T
+
+//声明带实化类型参数的函数
+inline fun <reified T> isA(value: Any) = value is T     //现在代码可以编译了
+
+//filterIsInstance的简化实现
+inline fun <reified T>
+        Iterable<*>.filterIsInstance(): List<T> {     //reified声明了类型参数不会在运行时被擦除
+    val destination = mutableListOf<T>()
+
+    for (element in this) {
+        if (element is T) {         //可以检查元素是不是指定为类型参数的类的实列
+            destination.add(element)
+        }
+    }
+    return destination
+
+    //上面的代码生产的代码和下面这段是等价的，（对调用filterIsInstance<String>来说）
+//    for (element in this) {
+//        if (element is String) {        //引用具体类
+//            destination.add(element)
+//        }
+//    }
+}
+
+//用带实化类型参数的函数重写loadService
+inline fun <reified T> loadService() =      //类型参数标记成了reified
+        ServiceLoader.load(T::class.java)       //把T::class当成类型形参访问
+
+//简化Android上的startActivity函数
+//inline fun <reified T:Activity>
+//        Context.startActivity(){
+//    val intent = Intent(this,T::class.java)
+//    startActivity(intent)
+//}
+//
+//startActivity<DetailActivity>()       //调用方法显示Activity
+
 fun main(args: Array<String>) {
-    p(printSum1(listOf(1,2,3)))
+//    val serviceImpl = ServiceLoader.load(Service::class.java)
+    val serviceImpl = loadService<Service>()
+    //使用标准库函数filterIsInstance
+    val items = listOf("one", 2, "three")
+    p(items.filterIsInstance<String>())
+
+//    p(isA<String>("abc"))
+//    p(isA<String>(123))
+
+//    p(printSum1(listOf(1,2,3)))
 //    printSum(listOf(1, 2, 3))         //一切都符合预期
 //    printSum(setOf(1,2,3))          //Set不是List，所以抛出了异常
 //    printSum(listOf("a", "b", "c"))  //类型转换成功，但后面抛出了java.lang.String cannot be cast to java.lang.Number异常
