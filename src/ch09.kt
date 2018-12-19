@@ -1,7 +1,8 @@
+import com.sun.org.apache.xpath.internal.operations.Bool
 import java.lang.Appendable
 import java.lang.IllegalArgumentException
 import java.util.*
-import javax.xml.ws.Service
+import kotlin.reflect.KClass
 
 val authors = listOf("Dmitry", "Svetlana")      //类型推导
 val readers: MutableList<String> = mutableListOf()
@@ -112,12 +113,185 @@ inline fun <reified T> loadService() =      //类型参数标记成了reified
 //
 //startActivity<DetailActivity>()       //调用方法显示Activity
 
+//变型：泛型和子类型化
+fun printContents(list: List<Any>) {
+    p(list.joinToString())
+}
+
+//协变：保留子类型化关系(在类型参数的名称前加上out关键字就可以声明协变)
+interface Producer<out T> {
+    fun produce(): T
+}
+
+//定义一个不变型的类似集合的类
+open class Animal {
+    fun feed() {}
+}
+
+class Herd<T : Animal> {             //类型参数没有声明成协变的
+    val size: Int get() = 1
+    operator fun get(i: Int): T {
+        return Animal() as T
+    }
+}
+
+fun fendAll(animals: Herd<Animal>) {
+    for (i in 0 until animals.size) {
+        animals[i].feed()
+    }
+}
+
+//使用不变型的类似集合的类
+class Cat : Animal() {                         //Cat是一个Animal
+    fun cleanLitter() {}
+}
+
+//使用一个协变的类似集合的类
+class Herd2<out T : Animal> {             //类型参数T现在是协变的
+    val size: Int get() = 1
+    operator fun get(i: Int): T {
+        return Animal() as T
+    }
+}
+
+fun fendAll2(animals: Herd2<Animal>) {
+    for (i in 0 until animals.size) {
+        animals[i].feed()
+    }
+}
+
+fun takeCareOfCats(cats: Herd<Cat>) {
+    for (i in 0 until cats.size) {
+        cats[i].cleanLitter()
+//        fendAll(cats)             //错误：推导的类型是Hear<Cat>,但期望的却是Herd<Animal>
+    }
+}
+
+fun takeCareOfCats2(cats: Herd2<Cat>) {
+    for (i in 0 until cats.size) {
+        cats[i].cleanLitter()
+        fendAll2(cats)              //不需要类型转换
+    }
+}
+
+//逆变：反转子类型化关系
+fun enumerateCats(f: (Cat) -> Number) {}
+
+fun Animal.getIndex(): Int = 5
+
+//使用点变型：在类型出现的地方指定类型
+//带不变型类型参数的数据拷贝函数
+fun <T> copyData0(source: MutableList<T>,
+                  destination: MutableList<T>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+//带不变型类型参数的数据拷贝函数
+fun <T : R, R> copyData1(source: MutableList<T>,        //来源的元素类型应该是目标元素类型的子类型
+                         destination: MutableList<R>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+//带out投影类型参数的数据拷贝函数
+fun <T> copyData2(source: MutableList<out T>,       //可以给类型的用法加上out关键字：没有使用那些T用在in位置的方法
+                  destination: MutableList<T>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+//带in投影类型参数的数据拷贝函数
+fun <T> copyData3(source: MutableList<T>,
+                  destination: MutableList<in T>) {
+    for (item in source) {
+        destination.add(item)
+    }
+}
+
+//星号投影：使用*代替类型参数
+fun star() {
+    val list: MutableList<Any?> = mutableListOf('a', 1, "qwe")
+    val chars = mutableListOf('a', 'b', 'c')
+    val unknownElements: MutableList<*> =                        //MutableList<*>和MutableList<Anu?>不一样
+            if (Random().nextBoolean()) list else chars
+//    unknownElements.add(42)         //编译器禁止调用这个方法
+    p(unknownElements.first())        //读取元素是安全的：first()返回一个类型为Any？的元素
+}
+
+//当类型实参的信息并不重要的时候，可以使用星号投影的语法：不需要使用任何在签名中引用类型参数的方法，或者只是读取数据
+//而不关心它的具体类型。例如：可以实现一个接收List<*>做参数的printFirst函数：
+fun printFirst(list: List<*>) {         //每一种列表都是可能的实参
+    if (list.isNotEmpty()) {            //isNotEmpty()没有使用泛型类型参数
+        p(list.first())                 //first()现在返回的是Any?，但是这里足够了
+    }
+}
+
+//输入验证的接口
+interface FieldValidator<in T> {        //接口定义在T上的逆变
+    fun validate(input: T): Boolean     //T只在in位置使用(这个方法只是消费T的值)
+}
+
+object DefaultStringValidator : FieldValidator<String> {
+    override fun validate(input: String) = input.isNotEmpty()
+}
+
+object DefaultIntValidator : FieldValidator<Int> {
+    override fun validate(input: Int) = input >= 0
+}
+
+fun testValidator() {
+    //把所有的验证器都存储到同一个容器中，并根据输入的类型来选出正确的验证器
+    val validators = mutableMapOf<KClass<*>, FieldValidator<*>>()
+    validators[String::class] = DefaultStringValidator
+    validators[Int::class] = DefaultIntValidator
+
+    //错误：编译器不知道存储的是哪种类型，因为存储在map中的值的类型是FieldValidator<*>
+//    validators[String::class]!!.validate("")
+    //使用显示的转换获取验证器(不安全，不推荐，警告：未受检的转换)
+    val stringValidator = validators[String::class] as FieldValidator<String>
+    val stringValidator1 = validators[Int::class] as FieldValidator<String> //得到了一个错误的验证器，但代码可以编译
+//    p(stringValidator.validate(""))
+    p(stringValidator1.validate(""))                //直到使用验证器时才发现真正的错误
+
+}
+
+object Validators{
+    private val validators = mutableMapOf<KClass<*>, FieldValidator<*>>()
+
+    fun <T : Any> registerValidator(
+            kClass: KClass<T>, fieldValidator: FieldValidator<T>) {
+        validators[kClass] = fieldValidator
+    }
+
+    @Suppress("UNCHECKED_CAST")         //禁止关于未受检的转换到FieldValidator<T>的警告
+    operator fun <T : Any> get(kClass: KClass<T>): FieldValidator<T> =
+            validators[kClass] as? FieldValidator<T>
+    ?:throw IllegalArgumentException(
+            "No validator for ${kClass.simpleName}"
+    )
+}
+
 fun main(args: Array<String>) {
+    Validators.registerValidator(String::class,DefaultStringValidator)
+    Validators.registerValidator(Int::class,DefaultIntValidator)
+    p(Validators[String::class].validate("Kotlin"))
+    p(Validators[Int::class].validate(42))
+//    p(Validators[String::class].validate(42))
+
+//    enumerateCats(Animal::getIndex)     //在Kotlin中这段代码是合法的。Animal是Cat的超类型，而Int是Number的子类型
+
+//    printContents(listOf("abc","bac"))      //完全安全
+
 //    val serviceImpl = ServiceLoader.load(Service::class.java)
-    val serviceImpl = loadService<Service>()
+//    val serviceImpl = loadService<Service>()
     //使用标准库函数filterIsInstance
-    val items = listOf("one", 2, "three")
-    p(items.filterIsInstance<String>())
+
+//    val items = listOf("one", 2, "three")
+//    p(items.filterIsInstance<String>())
 
 //    p(isA<String>("abc"))
 //    p(isA<String>(123))
